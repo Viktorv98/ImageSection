@@ -1,0 +1,34 @@
+﻿<Window
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:ImageSection"
+        xmlns:System="clr-namespace:System;assembly=mscorlib" x:Class="ImageSection.MainWindow"
+        mc:Ignorable="d"
+        Title="MainWindow" Height="450" Width="800">
+
+    <Grid x:Name="grid1">
+        <TextBlock HorizontalAlignment="Left" Margin="31,22,0,0" TextWrapping="Wrap" Text="Ширина фрагмента:" VerticalAlignment="Top"/>
+        <TextBlock HorizontalAlignment="Left" Margin="31,58,0,0" TextWrapping="Wrap" Text="Высота фрагмента:" VerticalAlignment="Top"/>
+        <TextBlock HorizontalAlignment="Left" Margin="31,93,0,0" TextWrapping="Wrap" Text="Количество фрагментов:" VerticalAlignment="Top"/>
+        <TextBox x:Name="width" HorizontalAlignment="Left" Height="23" Margin="185,19,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120" Text="150"  />
+        <TextBox x:Name="height" HorizontalAlignment="Left" Height="23" Margin="185,53,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120" Text="150"/>
+        <TextBox x:Name="count" HorizontalAlignment="Left" Height="23" Margin="185,88,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120" Text="7"/>
+        <Button x:Name="but1" Content="Сгенерировать" HorizontalAlignment="Left" Margin="31,128,0,0" VerticalAlignment="Top" Width="167" Height="25" Click="Button_Click"/>
+        <DataGrid x:Name="tableNumber" HorizontalAlignment="Left" Height="228" Margin="19,169,0,0" VerticalAlignment="Top" Width="286" IsSynchronizedWithCurrentItem="False" AutoGenerateColumns="False">
+            <DataGrid.Columns>
+                <DataGridTextColumn Binding="{Binding Path=CountF}" Header="№ картинки" Width="Auto"/>
+                <DataGridTextColumn Binding="{Binding Path=WidthF}" Header="X" Width="Auto"/>
+                <DataGridTextColumn Binding="{Binding Path=HeightF}" Header="Y"/>
+            </DataGrid.Columns>
+        </DataGrid>
+
+        <ScrollViewer Margin="325,19,9.6,23" >
+            <WrapPanel x:Name="wpanel" ScrollViewer.IsDeferredScrollingEnabled="True">
+            </WrapPanel>
+        </ScrollViewer>
+
+    </Grid>
+</Window>
+
