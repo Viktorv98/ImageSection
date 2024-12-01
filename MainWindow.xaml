@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:ImageSection"
         xmlns:System="clr-namespace:System;assembly=mscorlib" x:Class="ImageSection.MainWindow"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
+        Title="MainWindow" Height="450" Width="800" >
 
     <Grid x:Name="grid1">
         <TextBlock HorizontalAlignment="Left" Margin="31,22,0,0" TextWrapping="Wrap" Text="Ширина фрагмента:" VerticalAlignment="Top"/>
@@ -25,10 +25,31 @@
         </DataGrid>
 
         <ScrollViewer Margin="325,19,9.6,23" >
-            <WrapPanel x:Name="wpanel" ScrollViewer.IsDeferredScrollingEnabled="True">
+            <WrapPanel  ScrollViewer.IsDeferredScrollingEnabled="True">
+                <ItemsControl x:Name="icon" ItemsSource="{Binding PictureFragments}"
+                              VirtualizingStackPanel.IsVirtualizing="True" 
+                              VirtualizingPanel.VirtualizationMode="Recycling"
+                              VirtualizingStackPanel.CacheLength="0">
+                    <ItemsControl.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <WrapPanel />
+                        </ItemsPanelTemplate>
+                    </ItemsControl.ItemsPanel>
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <Grid>
+                                <Rectangle Width="{Binding width}" Height="{Binding height}"
+                                           Fill="{Binding ImagePath}">
+                                </Rectangle>
+                                <TextBlock Text="{Binding PictureNumber}" />
+                            </Grid>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
             </WrapPanel>
         </ScrollViewer>
-
     </Grid>
+
 </Window>
+
 
