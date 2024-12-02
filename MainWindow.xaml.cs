@@ -40,21 +40,38 @@ namespace ImageSection
         {          
             if ((width.Text != "") && (height.Text != "") && (count.Text != "")) // проверка на заполнение полей
             {
-                int heightf = Convert.ToInt32(height.Text);
-                int widthf = Convert.ToInt32(width.Text);
-                fragments.Clear(); // очистка массива при повторном нажатии кнопки
-
-                fragments = controller.CreateRandom(widthf, heightf, Convert.ToInt32(count.Text)); // генерация координат
-                tableNumber.ItemsSource = fragments;
-                tableNumber.Items.Refresh();
-
-                PictureFragments = controller.LoadImage(fragments, widthf, heightf);              
-                icon.ItemsSource = PictureFragments;
+                CreateRandom();
+                LoadImage();                
             }
             else
             {
                 MessageBox.Show("Проверьте входные данные!");
             }
+        }
+
+        public void CreateRandom() // вызов метода генерации координат фрагментов
+        {
+            int heightf = Convert.ToInt32(height.Text);
+            int widthf = Convert.ToInt32(width.Text);
+            fragments.Clear(); // очистка массива при повторном нажатии кнопки
+            fragments = controller.CreateRandom(widthf, heightf, Convert.ToInt32(count.Text)); // генерация координат
+            tableNumber.ItemsSource = fragments;
+            tableNumber.Items.Refresh();
+        }
+
+        private void LoadImage() // вызов метода создания фрагментов в виде серых прямоугольников
+        {
+            int heightf = Convert.ToInt32(height.Text);
+            int widthf = Convert.ToInt32(width.Text);
+            PictureFragments = controller.LoadGreyRect(fragments, widthf, heightf);
+            icon.ItemsSource = PictureFragments;
+        }
+
+        private async void Image_Loaded(object sender, RoutedEventArgs e) // метод для замены фона прямоугольника на изображение
+        {
+            var image = sender as System.Windows.Controls.Image;
+            var fragment = image.DataContext as PictureFragment;
+            image.Source = await Task.Run(() => controller.LoadImageAsync(fragment));
         }
 
     }

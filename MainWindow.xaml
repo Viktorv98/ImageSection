@@ -37,12 +37,13 @@
                     </ItemsControl.ItemsPanel>
                     <ItemsControl.ItemTemplate>
                         <DataTemplate>
-                            <Grid>
-                                <Rectangle Width="{Binding width}" Height="{Binding height}"
-                                           Fill="{Binding ImagePath}">
-                                </Rectangle>
-                                <TextBlock Text="{Binding PictureNumber}" />
-                            </Grid>
+                            <Border Width="{Binding width}" Height="{Binding height}" Background="LightGray">
+                                <Grid>
+                                    <Image Width="{Binding width}" Height="{Binding height}" 
+                                           Loaded="Image_Loaded" />
+                                    <TextBlock Text="{Binding PictureNumber}" />
+                                 </Grid>
+                            </Border>
                         </DataTemplate>
                     </ItemsControl.ItemTemplate>
                 </ItemsControl>

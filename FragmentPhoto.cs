@@ -20,7 +20,6 @@ namespace ImageSection
         public int WidthF { get; set; }
         public int HeightF { get; set; }
 
-
         public FragmentPhoto(int CF, int WF, int HF)
         {
             WidthF = WF;
@@ -33,12 +32,10 @@ namespace ImageSection
     {
         public string PictureNumber { get; set; }
         public bool IsImageLoaded { get; set; }
-
         public int width { get; set; }
         public int height { get; set; }
-        public ImageBrush ImagePath { get; set; }
 
-        public ObservableCollection<PictureFragment> LoadImage(List<FragmentPhoto> fragmentPhoto, int width, int height)
+        public ObservableCollection<PictureFragment> LoadGreyRect(List<FragmentPhoto> fragmentPhoto, int width, int height) // метод создания массива фрагментов
         {
             this.width = width;
             this.height = height;
@@ -46,52 +43,50 @@ namespace ImageSection
             // Загрузка изображений
             foreach (var fragment in fragmentPhoto)
             {
-                pictures.Add(LoadOneImage(fragment));
+                pictures.Add(LoadOneGreyRect(fragment));
             }
             return pictures;
         }
-     
-        public PictureFragment LoadOneImage(FragmentPhoto fragmentPhoto)
-        {
-            string pictureNumber = $"{fragmentPhoto.CountF}, {fragmentPhoto.WidthF}, {fragmentPhoto.HeightF}";
-            MemoryCache Cache = new MemoryCache(new MemoryCacheOptions());
-            ImageBrush imageBrush = new ImageBrush();
-            if (!Cache.TryGetValue(pictureNumber, out imageBrush))
-            {
-                FragmentContext db = new FragmentContext();
-                List<Photos> photos = db.photos.Where(p => p.NumberF == fragmentPhoto.CountF).ToList<Photos>();
-                MemoryStream stream = new MemoryStream(photos[0].ImageData);
-                var img = new Bitmap(stream);
-                Bitmap region = new Bitmap(width, height);
 
-                using (Graphics g = Graphics.FromImage(region)) // "вырезание" фрагмента 
-                {
-                    g.DrawImage(img, 0, 0, new System.Drawing.Rectangle(fragmentPhoto.WidthF, fragmentPhoto.HeightF, width, height), GraphicsUnit.Pixel);
-                }
-                using (MemoryStream memory = new MemoryStream()) // создание ImageBrush для заливки фона прямоугольника
-                {
-                    region.Save(memory, ImageFormat.Png);
-                    memory.Position = 0;
-                    BitmapImage bitmapImage = new BitmapImage();
-                    bitmapImage.BeginInit();
-                    bitmapImage.StreamSource = memory;
-                    bitmapImage.CacheOption = BitmapCacheOption.OnLoad;
-                    bitmapImage.EndInit();
-                    ImageBrush imageBrush1 = new ImageBrush();
-                    imageBrush1.ImageSource = bitmapImage;
-                    imageBrush = imageBrush1;
-                }
-                Cache.Set(pictureNumber, imageBrush);
-            }
+        public PictureFragment LoadOneGreyRect(FragmentPhoto fragmentPhoto) // метод создания одного фрагмента в виде серого прямоугольника
+        {
             PictureFragment picture = new PictureFragment();
+            string pictureNumber = $"{fragmentPhoto.CountF}, {fragmentPhoto.WidthF}, {fragmentPhoto.HeightF}";
             picture.PictureNumber = pictureNumber;
             picture.IsImageLoaded = true;
             picture.width = width;
             picture.height = height;
-            picture.ImagePath = imageBrush;
 
             return picture;
         }
-    }
 
+        public BitmapImage LoadFillRect(PictureFragment fragmentPhoto) // метод для подгрузки одного фрагмента
+        {
+            string[] paramsf = fragmentPhoto.PictureNumber.Split(',');
+            int number = Convert.ToInt32(paramsf[0]);
+            FragmentContext db = new FragmentContext();
+            List<Photos> photos = db.photos.Where(p => p.NumberF == number).ToList<Photos>();
+            MemoryStream stream = new MemoryStream(photos[0].ImageData);
+            var img = new Bitmap(stream);
+            Bitmap region = new Bitmap(width, height);
+            BitmapImage bitmapImage = new BitmapImage();
+            using (Graphics g = Graphics.FromImage(region)) // "вырезание" фрагмента 
+            {
+                g.DrawImage(img, 0, 0, new System.Drawing.Rectangle(Convert.ToInt32(paramsf[1]), Convert.ToInt32(paramsf[2]), width, height), GraphicsUnit.Pixel);
+            }
+            using (MemoryStream memory = new MemoryStream()) // создание BitmapImage для заливки фона прямоугольника
+            {
+                region.Save(memory, ImageFormat.Png);
+                memory.Position = 0;
+
+                bitmapImage.BeginInit();
+                bitmapImage.StreamSource = memory;
+                bitmapImage.CacheOption = BitmapCacheOption.OnLoad;
+                bitmapImage.EndInit();
+                bitmapImage.Freeze();
+            }
+            return bitmapImage;
+        }
+    }
 }
+
